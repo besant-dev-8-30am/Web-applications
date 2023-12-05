@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from your GitHub repository
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/besant-dev-8-30am/Web-applications.git']])
+            }
+        }
+        
+        stage ('create_docker_file') {
+            steps {
+                sh ('docker build -t web-server-image:v1 .')
+            }
+        }
+        
+        stage ('List_images_present_in_server') {
+            steps {
+                sh ('docker images')
+            }
+        }
+        
+        stage ("Deploy_website") {
+            steps {
+                sh ('docker run -d -p 8080:80 web-server-image:v1') 
+           }
+        }
+    }
+}
